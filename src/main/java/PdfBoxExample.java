@@ -4,6 +4,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import java.util.Calendar;
 
@@ -35,6 +36,17 @@ public class PdfBoxExample {
         }
     }
 
+    public static void drawImage(PDDocument doc, PDPageContentStream contentStream, int tx, int ty, float scaleX, float scaleY, String fileName) {
+        try {
+            PDImageXObject image = PDImageXObject.createFromFile(fileName, doc);
+            int iw = (int) (image.getWidth() * scaleX);
+            int ih = (int) (image.getHeight() * scaleY);
+            contentStream.drawImage(image, tx, ty, iw, ih);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         //Tworzenie nazwy pliku i jego ścieżka // Creating a file name and its path
         Calendar c = Calendar.getInstance();
@@ -54,6 +66,8 @@ public class PdfBoxExample {
 
         writeTextColumn(contentStream1, 280, 700, null, "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
                 50);
+
+        drawImage(document, contentStream1, 200, 200, 0.2f, 0.2f, "files/img1.jpg");
 
         contentStream1.close();
 
