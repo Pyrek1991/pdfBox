@@ -1,3 +1,4 @@
+import org.apache.commons.text.WordUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -13,12 +14,24 @@ public class PdfBoxExample {
 
         try {
             contentStream.beginText();
-            contentStream.setFont(font, 12);
+            contentStream.setFont(font, 10);
             contentStream.newLineAtOffset(tx, ty); // 595 x 842
             contentStream.showText(text);
             contentStream.endText();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void writeTextColumn(PDPageContentStream contentStream, int tx, int ty, PDFont font, String text, int wrapLength) {
+        String lines[] = WordUtils.wrap(text, wrapLength).split("\\r?\\n");
+
+        int posY = 0;
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            System.out.println(line);
+            posY = ty - i * 15;
+            writeLineOfText(contentStream, tx, posY, font, line);
         }
     }
 
@@ -36,9 +49,15 @@ public class PdfBoxExample {
 
         writeLineOfText(contentStream1, 40, 100, null, "Hello World!");
 
+        writeTextColumn(contentStream1, 40, 700, null, "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                50);
+
+        writeTextColumn(contentStream1, 280, 700, null, "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                50);
+
         contentStream1.close();
 
-        // nowa strona
+        // nowa strona // new page
         PDPage page2 = new PDPage();
         PDPageContentStream contentStream2 = new PDPageContentStream(document, page2);
         document.addPage(page2);
